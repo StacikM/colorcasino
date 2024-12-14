@@ -1,0 +1,164 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        table {
+            border: groove;
+            border-color: blueviolet;
+            border-radius: 25%;
+        }
+        td {
+            color: white;
+        }
+        body {
+            background-color: skyblue;
+        }
+        tr {
+            border: groove;
+            border-color: purple;
+        }
+        .first, .second, .third {
+            color: lightblue;
+        }
+    </style>
+</head>
+<body>
+    <table border="5px">
+        <tr>
+            <th colspan="2">Table</th>
+        </tr>
+        <tr>
+            <td>a</td>
+            <td>b</td>
+        </tr>
+        <tr>
+            <td>c</td>
+            <td>d</td>
+        </tr>
+    </table>
+    <table border="3px">
+        <tr>
+            <th colspan="3">Casino of Colors</th>
+        </tr>
+        <tr>
+            <td><button id="start" onclick="loadGame()">Play</button></td>
+            <td><button id="resetScore" onclick="resetScore()" disabled>Reset score</button></td>
+            <td><button id="surrender" onclick="surrender()" disabled>Surrender</button></td>
+        </tr>
+        <tr>
+            <td colspan="3"><p id="scoreTxt">Score: Game off</p></td>
+        </tr>
+        <tr>
+            <td><button style="background-color: magenta;" onclick="validateButton('first')" id="first" disabled>guess</button></td>
+            <td><button style="background-color: indigo;" onclick="validateButton('second')" id="second" disabled>guess</button></td>
+            <td><button style="background-color: pink;" onclick="validateButton('third')" id="third" disabled>guess</button></td>
+        </tr>
+    </table>
+
+    <script>
+        const colors = ["pink", "indigo", "magenta", "red", "green", "white", "black", "blue", "lightblue", "blueviolet"];
+        let points = 0;
+        let gameActivated = false;
+        let targetColor = "";
+
+        function loadGame() {
+            gameActivated = true;
+            points = 1;
+            document.getElementById("start").disabled = true;
+            document.getElementById("resetScore").disabled = false;
+            document.getElementById("surrender").disabled = false;
+            enableButtons();
+            updateScore();
+            assignColors();
+        }
+
+        function enableButtons() {
+            document.getElementById("first").disabled = false;
+            document.getElementById("second").disabled = false;
+            document.getElementById("third").disabled = false;
+        }
+
+        function disableButtons() {
+            document.getElementById("first").disabled = true;
+            document.getElementById("second").disabled = true;
+            document.getElementById("third").disabled = true;
+        }
+
+        function assignColors() {
+            targetColor = colors[Math.floor(Math.random() * colors.length)];
+            document.getElementById("scoreTxt").innerHTML = `Score: ${points} - Guess: ${capitalize(targetColor)}`;
+
+            const randomColor = colors[Math.floor(Math.random() * colors.length)];
+            const buttonIds = ["first", "second", "third"];
+            buttonIds.forEach((id) => {
+                const button = document.getElementById(id);
+                button.style.backgroundColor = randomColor;
+            });
+
+            const correctButton = buttonIds[Math.floor(Math.random() * buttonIds.length)];
+            document.getElementById(correctButton).style.backgroundColor = targetColor;
+        }
+
+        function capitalize(color) {
+            return color.charAt(0).toUpperCase() + color.slice(1);
+        }
+
+        function validateButton(buttonId) {
+            const button = document.getElementById(buttonId);
+            const buttonColor = button.style.backgroundColor;
+
+            if (buttonColor === targetColor) {
+                givePoint();
+            } else {
+                losePoint();
+            }
+        }
+
+        function givePoint() {
+            points++;
+            updateScore();
+            assignColors();
+        }
+
+        function losePoint() {
+            points--;
+            if (points <= 0) {
+                lose();
+            } else {
+                updateScore();
+                assignColors();
+            }
+        }
+
+        function updateScore() {
+            document.getElementById("scoreTxt").innerHTML = `Score: ${points} - Guess: ${capitalize(targetColor)}`;
+        }
+
+        function resetScore() {
+            points = 1;
+            updateScore();
+            assignColors();
+        }
+
+        function lose() {
+            alert("YOU LOSE");
+            disableButtons();
+            while (true) {
+                window.open("index.html");
+            }
+        }
+
+        function surrender() {
+            if (points <= 0) {
+                lose();
+            } else {
+                alert("You can't surrender now muhehehehe!");
+            }
+        }
+    </script>
+</body>
+</html>
